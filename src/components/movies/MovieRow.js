@@ -51,7 +51,7 @@ export default function MovieRow({ index, movie, onDelete, onToggleStatus, onUpd
           movie.genre  
         )}  
       </td>  
-      <td style={{ display: "flex" }}>
+      <td style={{ textAlign: "center" }}>
         <div style={{display: "flex", justifyContent: "space-around", gap: "0.5rem", alignItems: "center"}}>
           {editMode ? (  
             <>  
