@@ -1,0 +1,189 @@
+/* src/App.css */
+
+/* Global font & background */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
+  /* Light grey */
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar styling */
+.navbar {
+  background: linear-gradient(90deg, #4e54c8, #8f94fb) !important;
+}
+
+.navbar .navbar-brand {
+  font-weight: bold;
+  color: #fff !important;
+  font-size: 1.4rem;
+}
+
+.navbar .nav-link {
+  color: #f5f5f5 !important;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.navbar .nav-link:hover {
+  color: #ffdd57 !important;
+  transform: translateY(-2px);
+}
+
+
+/* Bootstrap Card enhancements */
+.card {
+  border: none;
+  border-radius: 12px;
+}
+
+.card-title {
+  font-weight: bold;
+  color: #4e54c8;
+}
+
+/* Buttons */
+.btn-success {
+  background-color: #4e54c8 !important;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #3b40a0 !important;
+}
+
+.btn-danger {
+  background-color: #ff4d4f !important;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #d9363e !important;
+}
+
+.btn-warning {
+  background-color: #ffdd57 !important;
+  color: #000 !important;
+  border: none;
+}
+
+.btn-warning:hover {
+  background-color: #e6c84c !important;
+}
+
+/* Table enhancements */
+.table {
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table th {
+  background-color: #4e54c8;
+  color: white;
+  text-align: center;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+  background-color: #f9f9ff;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #eef0ff;
+}
+
+/* Form controls */
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #4e54c8;
+  box-shadow: 0 0 5px rgba(78, 84, 200, 0.5);
+}
+
+/* Toggle switch label */
+.form-check-label {
+  font-weight: 500;
+  color: #4e54c8;
+}
+
+.nav-link.active {
+  color: #ffdd57 !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+
+/* Default dark mode */
+body[data-theme="dark"] {
+  background-color: #121212;
+  color: #f8f9fa;
+}
+
+body[data-theme="light"] {
+  background-color: #ffffff;
+  color: #212529;
+}
+
+/* Optional: tweak bootstrap overrides */
+.navbar[data-bs-theme="dark"] {
+  background-color: #212529 !important;
+}
+
+.navbar[data-bs-theme="light"] {
+  background-color: #f8f9fa !important;
+}
+
+
+/* App.css */
+body.dark-theme .custom-close .btn-close {
+  filter: invert(1);
+  /* makes it white */
+  opacity: 1;
+  /* full visibility */
+}
+
+.custom-close .btn-close:hover {
+  filter: invert(0.5);
+  /* subtle hover effect */
+}
+
+
+
+/* App.css (or admin specific css) */
+.sidebar {
+  position: sticky;
+  color: #fff;
+  height: 100%;
+  left: 0;
+  top: 60px;
+}
+.light-sidebar{
+  background: linear-gradient(150deg, #4e54c8, #8f94fb);
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.9);
+  padding: 12px 20px;
+}
+
+.sidebar .nav-link.active {
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 600;
+}
+
+/* ensure tables look crisp */
+.table th {
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.table td,
+.table th {
+  vertical-align: middle !important;
+}
