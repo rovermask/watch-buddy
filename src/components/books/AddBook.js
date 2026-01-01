@@ -8,11 +8,15 @@ import Form from "react-bootstrap/Form";
 import BookTable from "./BookTable";  
 import BookForm from "./BookForm";  
 import { FaPlus } from "react-icons/fa";  
-  
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import BookGrid from "./BookGrid";
+import ToggleButton from "react-bootstrap/ToggleButton";
+
 export default function AddBook() {  
   const [user] = useAuthState(auth);
   const [books, setBooks] = useState([]);  
   const [view, setView] = useState("To Read");  
+  const [layout, setLayout] = useState("grid"); // table | grid
   const [search, setSearch] = useState("");  
   const [showModal, setShowModal] = useState(false);  
   
@@ -70,6 +74,11 @@ export default function AddBook() {
       field?.toLowerCase().includes(search.toLowerCase())  
     )  
   );  
+
+    // 🔹 Status filter
+  const visibleBooks = filteredBooks.filter(
+    (b) => b.status === view
+  );
   
   return (  
     <div className="container py-4">  
@@ -100,19 +109,53 @@ export default function AddBook() {
           style={{ maxWidth: "250px" }}  
           className="mb-2"  
         />  
+
+        {/* 🔹 Table / Grid Toggle */}
+        <ButtonGroup className="ms-auto">
+          <ToggleButton
+            id="layout-table"
+            type="radio"
+            variant="outline-secondary"
+            checked={layout === "table"}
+            onChange={() => setLayout("table")}
+          >
+            ☰
+          </ToggleButton>
+
+          <ToggleButton
+            id="layout-grid"
+            type="radio"
+            variant="outline-secondary"
+            checked={layout === "grid"}
+            onChange={() => setLayout("grid")}
+          >
+            ⬛
+          </ToggleButton>
+        </ButtonGroup>
       </div>  
   
       {/* Books Table */}  
-      {filteredBooks.length > 0 ? (  
+      {visibleBooks.length > 0 ? (  
+        layout === "table" ? (
         <BookTable  
-          books={filteredBooks.filter((b) => b.status === view)}  
+          books={visibleBooks.filter((b) => b.status === view)}  
           onDelete={handleDelete}  
           onToggleStatus={handleToggleStatus}  
           onUpdate={handleUpdate}  
         />  
-      ) : (  
-        <div className="text-center text-muted py-4">No books found</div>  
+      ) : (
+          <BookGrid
+            books={visibleBooks}
+            onDelete={handleDelete}
+            onToggleStatus={handleToggleStatus}
+          />
+        )
+      ) : (
+        <div className="text-center text-muted py-4">
+          No books found
+        </div>
       )}
+
       {/* Add Book Modal — with Google Books API integration */}  
       <BookForm  
         show={showModal}  

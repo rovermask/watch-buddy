@@ -2,94 +2,104 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { collection, onSnapshot, deleteDoc, doc, updateDoc, addDoc, query, where } from "firebase/firestore";
+import {collection,onSnapshot,deleteDoc,doc,updateDoc,addDoc,query,where} from "firebase/firestore";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import MovieTable from "./MovieTable";
 import MovieForm from "./MovieForm";
 import { FaPlus } from "react-icons/fa";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import MovieGrid from "./MovieGrid";
+import ToggleButton from "react-bootstrap/ToggleButton";
 
 export default function AddMovie() {
   const [user] = useAuthState(auth);
   const [movies, setMovies] = useState([]);
-  const [view, setView] = useState("Watchlist");
+  const [view, setView] = useState("Watchlist"); // Watchlist | Watched
+  const [layout, setLayout] = useState("grid"); // table | grid
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  // Fetch movies in realtime  
+  // 🔹 Fetch movies (realtime)
   useEffect(() => {
-    if (!user) return; // wait until user is loaded  
+    if (!user) return;
+
     const q = query(
       collection(db, "movies"),
       where("uid", "==", user.uid)
     );
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setMovies(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setMovies(snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })));
     });
+
     return unsubscribe;
   }, [user]);
 
-  // Add new movie  
+  // 🔹 Add movie
   const handleAddMovie = async (movieData) => {
-    try {
-      await addDoc(collection(db, "movies"), {
-        ...movieData,
-        uid: user.uid // ✅ Store the logged-in user's ID  
-      });
-      setShowModal(false);
-    } catch (err) {
-      alert("Error adding movie: " + err.message);
-    }
+    await addDoc(collection(db, "movies"), {
+      ...movieData,
+      uid: user.uid,
+    });
+    setShowModal(false);
   };
 
-  // Delete movie  
+  // 🔹 Delete movie
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this movie?")) {
-      try {
-        await deleteDoc(doc(db, "movies", id));
-      } catch (err) {
-        alert("Error deleting movie: " + err.message);
-      }
+    if (window.confirm("Delete this movie?")) {
+      await deleteDoc(doc(db, "movies", id));
     }
   };
 
-  // Toggle watchlist/watched  
+  // 🔹 Toggle status
   const handleToggleStatus = async (id, currentStatus) => {
-    const newStatus = currentStatus === "Watchlist" ? "Watched" : "Watchlist";
+    const newStatus =
+      currentStatus === "Watchlist" ? "Watched" : "Watchlist";
     await updateDoc(doc(db, "movies", id), { status: newStatus });
   };
 
-  // Update movie  
+  // 🔹 Update movie
   const handleUpdate = async (id, updatedData) => {
     await updateDoc(doc(db, "movies", id), updatedData);
   };
 
-  // Filter movies  
+  // 🔹 Search filter
   const filteredMovies = movies.filter((m) =>
-    [m.title, m.genre, m.year.toString() || ""].some((field) =>
-      field.toLowerCase().includes(search.toLowerCase())
-    )
+    [m.title, m.genre, m.year?.toString() || ""]
+      .some((field) =>
+        field.toLowerCase().includes(search.toLowerCase())
+      )
+  );
+
+  // 🔹 Status filter
+  const visibleMovies = filteredMovies.filter(
+    (m) => m.status === view
   );
 
   return (
     <div className="container py-4">
-      {/* Controls */}
-      <div className="d-flex flex-wrap align-items-center mb-3">
+      {/* 🔹 Controls */}
+      <div className="d-flex flex-wrap align-items-center mb-3 gap-2">
         <Button
           variant="primary"
           onClick={() => setShowModal(true)}
-          className="d-flex me-3 mb-2 align-items-center"
+          className="d-flex align-items-center"
         >
-          <FaPlus /> Add Movie
+          <FaPlus className="me-2" /> Add Movie
         </Button>
 
         <Form.Check
           type="switch"
           id="view-toggle"
-          label={view === "Watchlist" ? "Showing Watchlist" : "Showing Watched"}
+          label={`Showing ${view}`}
           checked={view === "Watched"}
-          onChange={() => setView(view === "Watchlist" ? "Watched" : "Watchlist")}
-          className="me-3 mb-2"
+          onChange={() =>
+            setView(view === "Watchlist" ? "Watched" : "Watchlist")
+          }
         />
 
         <Form.Control
@@ -98,23 +108,55 @@ export default function AddMovie() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           style={{ maxWidth: "250px" }}
-          className="mb-2"
         />
+
+        {/* 🔹 Table / Grid Toggle */}
+        <ButtonGroup className="ms-auto">
+          <ToggleButton
+            id="layout-table"
+            type="radio"
+            variant="outline-secondary"
+            checked={layout === "table"}
+            onChange={() => setLayout("table")}
+          >
+            ☰
+          </ToggleButton>
+
+          <ToggleButton
+            id="layout-grid"
+            type="radio"
+            variant="outline-secondary"
+            checked={layout === "grid"}
+            onChange={() => setLayout("grid")}
+          >
+            ⬛
+          </ToggleButton>
+        </ButtonGroup>
       </div>
 
-      {/* Movie Table */}
-      {filteredMovies.length > 0 ? (
-        <MovieTable
-          movies={filteredMovies.filter((m) => m.status === view)}
-          onDelete={handleDelete}
-          onToggleStatus={handleToggleStatus}
-          onUpdate={handleUpdate}
-        />
+      {/* 🔹 Content */}
+      {visibleMovies.length > 0 ? (
+        layout === "table" ? (
+          <MovieTable
+            movies={visibleMovies}
+            onDelete={handleDelete}
+            onToggleStatus={handleToggleStatus}
+            onUpdate={handleUpdate}
+          />
+        ) : (
+          <MovieGrid
+            movies={visibleMovies}
+            onDelete={handleDelete}
+            onToggleStatus={handleToggleStatus}
+          />
+        )
       ) : (
-        <div className="text-center text-muted py-4">No movies found</div>
+        <div className="text-center text-muted py-4">
+          No movies found
+        </div>
       )}
 
-      {/* Add Movie Modal */}
+      {/* 🔹 Add Movie Modal */}
       <MovieForm
         show={showModal}
         handleClose={() => setShowModal(false)}
@@ -122,4 +164,4 @@ export default function AddMovie() {
       />
     </div>
   );
-}  
+}

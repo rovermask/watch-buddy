@@ -8,11 +8,15 @@ import Form from "react-bootstrap/Form";
 import SeriesTable from "./SeriesTable";
 import SeriesForm from "./SeriesForm";
 import { FaPlus } from "react-icons/fa";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import SeriesGrid from "./SeriesGrid";
+import ToggleButton from "react-bootstrap/ToggleButton";
 
 export default function AddSeries() {
   const [user] = useAuthState(auth);
   const [series, setSeries] = useState([]);
   const [view, setView] = useState("Watchlist"); // internal lowercase status  
+  const [layout, setLayout] = useState("grid"); // table | grid
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
 
@@ -70,6 +74,12 @@ export default function AddSeries() {
       .some((field) => field.toLowerCase().includes(search.toLowerCase()))
   );
 
+    // 🔹 Status filter
+  const visibleSeries = filteredSeries.filter(
+    (s) => s.status === view
+  );
+
+
   return (
     <div className="container py-4">
       {/* Controls */}
@@ -99,10 +109,34 @@ export default function AddSeries() {
           style={{ maxWidth: "250px" }}
           className="mb-2"
         />
+
+        {/* 🔹 Table / Grid Toggle */}
+        <ButtonGroup className="ms-auto">
+          <ToggleButton
+            id="layout-table"
+            type="radio"
+            variant="outline-secondary"
+            checked={layout === "table"}
+            onChange={() => setLayout("table")}
+          >
+            ☰
+          </ToggleButton>
+
+          <ToggleButton
+            id="layout-grid"
+            type="radio"
+            variant="outline-secondary"
+            checked={layout === "grid"}
+            onChange={() => setLayout("grid")}
+          >
+            ⬛
+          </ToggleButton>
+        </ButtonGroup>
       </div>
 
       {/* Series Table */}
-      {filteredSeries.length > 0 ? (
+      {visibleSeries.length > 0 ? (
+        layout === "table" ? (
         <SeriesTable
           series={filteredSeries.filter((s) => s.status === view)}
           onDelete={handleDelete}
@@ -110,7 +144,16 @@ export default function AddSeries() {
           onUpdate={handleUpdate}
         />
       ) : (
-        <div className="text-center text-muted py-4">No series found</div>
+          <SeriesGrid
+            series={visibleSeries}
+            onDelete={handleDelete}
+            onToggleStatus={handleToggleStatus}
+          />
+      )
+    ) : (
+        <div className="text-center text-muted py-4">
+          No series found
+        </div>
       )}
 
       {/* Add Series Modal */}

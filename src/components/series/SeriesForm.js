@@ -79,10 +79,11 @@ export default function SeriesForm({ show, handleClose, handleSave }) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    handleSave({ title, year, genre, status });
+    handleSave({ title, year, genre, status, cover });
     setTitle("");
     setYear("");
     setGenre("");
+    setCover("");
     setStatus("Watchlist");
     handleClose();
   };
