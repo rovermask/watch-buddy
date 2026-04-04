@@ -35,6 +35,18 @@ export default function AddBook() {
   
   // Add new book (from BookForm, which now supports Google Books autofill)  
   const handleAddBook = async (bookData) => {
+    // Normalize input
+    const newTitle = bookData.title.trim().toLowerCase();
+
+    // Check duplicates
+    const alreadyExists = books.some(
+      (b) => b.title.trim().toLowerCase() === newTitle
+    );
+
+    if (alreadyExists) {
+      alert("This book already exists in your list 🎬");
+      return;
+    }
     try {
       await addDoc(collection(db, "books"), {
         ...bookData,

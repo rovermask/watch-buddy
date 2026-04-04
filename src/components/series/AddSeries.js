@@ -35,6 +35,18 @@ export default function AddSeries() {
 
   // Add new series  
   const handleAddSeries = async (seriesData) => {
+      // Normalize input
+    const newTitle = seriesData.title.trim().toLowerCase();
+
+    // Check duplicates
+    const alreadyExists = series.some(
+      (s) => s.title.trim().toLowerCase() === newTitle
+    );
+
+    if (alreadyExists) {
+      alert("This series already exists in your list 🎬");
+      return;
+    }
     try {
       await addDoc(collection(db, "series"), {
         ...seriesData,

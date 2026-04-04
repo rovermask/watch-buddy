@@ -10,6 +10,7 @@ import AdminPage from "./components/admin/AdminPage";
 import AdminRoute from "./AdminRoute";
 import DashboardRoute from "./DashboardRoute";
 import Insights from "./components/admin/Insights";
+import Recommendations from "./components/recommendations/Recommendations";
 import UsersTable from "./components/admin/tables/UsersTable";
 import MoviesTable from "./components/admin/tables/MoviesTable";
 import BooksTable from "./components/admin/tables/BooksTable";
@@ -43,6 +44,15 @@ function App() {
 
       {/* User routes */}
       <Route path="/" element={<DashboardRoute />} />
+      <Route
+        path="/recommendations"
+        element={
+          <ProtectedRoute>
+            <NavBar />
+            <Recommendations />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/movies"
         element={

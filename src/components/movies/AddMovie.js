@@ -41,6 +41,18 @@ export default function AddMovie() {
 
   // 🔹 Add movie
   const handleAddMovie = async (movieData) => {
+    // Normalize input
+    const newTitle = movieData.title.trim().toLowerCase();
+
+    // Check duplicates
+    const alreadyExists = movies.some(
+      (m) => m.title.trim().toLowerCase() === newTitle
+    );
+
+    if (alreadyExists) {
+      alert("This movie already exists in your list 🎬");
+      return;
+    }
     await addDoc(collection(db, "movies"), {
       ...movieData,
       uid: user.uid,
