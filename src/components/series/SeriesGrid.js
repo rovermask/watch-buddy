@@ -3,7 +3,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import { useTheme } from "../../ThemeContext";
-import { FaCheckCircle, FaEdit, FaTrashAlt, FaSave, FaTimes } from "react-icons/fa";  
+import { FaTrashAlt } from "react-icons/fa";  
 
 export default function SeriesGrid({ series, onDelete, onToggleStatus }) {
   const { darkMode } = useTheme();
