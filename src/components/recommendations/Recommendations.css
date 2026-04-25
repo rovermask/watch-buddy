@@ -359,10 +359,6 @@
   border-color: var(--wb-purple);
 }
 
-.wb-card--dark {
-  /* Uses CSS vars set on .wb-page--dark */
-}
-
 /* poster */
 .wb-card__poster-wrap {
   position: relative;
