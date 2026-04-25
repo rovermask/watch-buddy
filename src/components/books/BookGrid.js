@@ -1,62 +1,86 @@
-import Card from "react-bootstrap/Card";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
+// src/components/books/BookGrid.js
+import { useState } from "react";
 import { useTheme } from "../../ThemeContext";
+import "../MediaGrid.css";
 
 export default function BookGrid({ books, onDelete, onToggleStatus }) {
   const { darkMode } = useTheme();
 
   if (books.length === 0) {
-    return <p className="text-center">No books found.</p>;
+    return (
+      <div className="mg-empty">
+        <span>📺</span>
+        <p>No books here yet.</p>
+      </div>
+    );
   }
 
   return (
-    <Row className="g-4">
-      {books.map((book) => (
-        <Col key={book.id} xs={6} sm={4} md={3} lg={2}>
-          <Card
-            className={`h-100 shadow-sm ${
-              darkMode ? "bg-dark text-light" : ""
-            }`}
-          >
-            <Card.Img
-              variant="top"
-              src={
-                book.cover ||
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"
-              }
-              style={{ height: "280px", objectFit: "cover" }}
-            />
-
-            <Card.Body className="p-2">
-              <Card.Title
-                className="small text-center"
-                title={book.title}
-              >
-                {book.title} {book.year}
-              </Card.Title>
-            </Card.Body>
-
-            <Card.Footer className="d-flex justify-content-between p-2">
-              <Button
-                size="sm"
-                variant="outline-success"
-                onClick={() => onToggleStatus(book.id,book.status)}
-              >
-                ✓
-              </Button>
-              <Button
-                size="sm"
-                variant="outline-danger"
-                onClick={() => onDelete(book.id)}
-              >
-                🗑
-              </Button>
-            </Card.Footer>
-          </Card>
-        </Col>
+    <div className="mg-grid">
+      {books.map((book, i) => (
+        <BooksCard
+          key={book.id}
+          book={book}
+          index={i}
+          onDelete={onDelete}
+          onToggleStatus={onToggleStatus}
+          darkMode={darkMode}
+        />
       ))}
-    </Row>
+    </div>
+  );
+}
+
+function BooksCard({ book, index, onDelete, onToggleStatus, darkMode }) {
+  const [imgErr, setImgErr] = useState(false);
+
+  return (
+    <div
+      className={`mg-card ${darkMode ? "mg-card--dark" : ""}`}
+      style={{ animationDelay: `${index * 40}ms` }}
+    >
+      <div className="mg-card__poster-wrap">
+        <img
+          src={
+            imgErr || !book.cover
+              ? "https://via.placeholder.com/300x440/16162e/6c63ff?text=📺"
+              : book.cover
+          }
+          alt={book.title}
+          className="mg-card__poster"
+          onError={() => setImgErr(true)}
+          loading="lazy"
+        />
+
+        <div className="mg-card__overlay">
+          <button
+            className="mg-card__action-btn mg-card__action-btn--success"
+            onClick={() => onToggleStatus(book.id, book.status)}
+          >
+            {book.status === "To Read" ? "✓ Read" : "↩ Read"}
+          </button>
+          <button
+            className="mg-card__action-btn mg-card__action-btn--danger"
+            onClick={() => onDelete(book.id)}
+          >
+            🗑 Delete
+          </button>
+        </div>
+
+        <div className={`mg-card__status mg-card__status--${book.status === "Watched" ? "watched" : "watchlist"}`}>
+          {book.status === "Read" ? "✓ Read" : "⏳ To Read"}
+        </div>
+      </div>
+
+      <div className="mg-card__info">
+        <h4 className="mg-card__title" title={book.title}>{book.title}</h4>
+        <div className="mg-card__meta">
+          {book.year && <span className="mg-card__year">{book.year}</span>}
+          {book.genre && (
+            <span className="mg-card__genre">{book.genre.split(",")[0].trim()}</span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

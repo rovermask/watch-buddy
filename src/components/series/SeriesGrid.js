@@ -1,63 +1,86 @@
-import Card from "react-bootstrap/Card";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
+// src/components/series/SeriesGrid.js
+import { useState } from "react";
 import { useTheme } from "../../ThemeContext";
-import { FaTrashAlt } from "react-icons/fa";  
+import "../MediaGrid.css";
 
 export default function SeriesGrid({ series, onDelete, onToggleStatus }) {
   const { darkMode } = useTheme();
 
   if (series.length === 0) {
-    return <p className="text-center">No series found.</p>;
+    return (
+      <div className="mg-empty">
+        <span>📺</span>
+        <p>No series here yet.</p>
+      </div>
+    );
   }
 
   return (
-    <Row className="g-4">
-      {series.map((show) => (
-        <Col key={show.id} xs={6} sm={4} md={3} lg={2}>
-          <Card
-            className={`h-100 shadow-sm ${
-              darkMode ? "bg-dark text-light" : ""
-            }`}
-          >
-            <Card.Img
-              variant="top"
-              src={
-                show.cover ||
-                "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/1665px-No-Image-Placeholder.svg.png"
-              }
-              style={{ height: "280px", objectFit: "cover" }}
-            />
-
-            <Card.Body className="p-2">
-              <Card.Title
-                className="small text-center"
-                title={show.title}
-              >
-                {show.title} {show.year}
-              </Card.Title>
-            </Card.Body>
-
-            <Card.Footer className="d-flex justify-content-between p-2">
-              <Button
-                size="sm"
-                variant="outline-success"
-                onClick={() => onToggleStatus(show.id,show.status)}
-              >
-                ✓
-              </Button>
-              <Button
-                size="sm"
-                variant="outline-danger"
-                onClick={() => onDelete(show.id)}
-              >
-                <FaTrashAlt />
-              </Button>
-            </Card.Footer>
-          </Card>
-        </Col>
+    <div className="mg-grid">
+      {series.map((show, i) => (
+        <SeriesCard
+          key={show.id}
+          show={show}
+          index={i}
+          onDelete={onDelete}
+          onToggleStatus={onToggleStatus}
+          darkMode={darkMode}
+        />
       ))}
-    </Row>
+    </div>
+  );
+}
+
+function SeriesCard({ show, index, onDelete, onToggleStatus, darkMode }) {
+  const [imgErr, setImgErr] = useState(false);
+
+  return (
+    <div
+      className={`mg-card ${darkMode ? "mg-card--dark" : ""}`}
+      style={{ animationDelay: `${index * 40}ms` }}
+    >
+      <div className="mg-card__poster-wrap">
+        <img
+          src={
+            imgErr || !show.cover
+              ? "https://via.placeholder.com/300x440/16162e/6c63ff?text=📺"
+              : show.cover
+          }
+          alt={show.title}
+          className="mg-card__poster"
+          onError={() => setImgErr(true)}
+          loading="lazy"
+        />
+
+        <div className="mg-card__overlay">
+          <button
+            className="mg-card__action-btn mg-card__action-btn--success"
+            onClick={() => onToggleStatus(show.id, show.status)}
+          >
+            {show.status === "Watchlist" ? "✓ Watched" : "↩ Watchlist"}
+          </button>
+          <button
+            className="mg-card__action-btn mg-card__action-btn--danger"
+            onClick={() => onDelete(show.id)}
+          >
+            🗑 Delete
+          </button>
+        </div>
+
+        <div className={`mg-card__status mg-card__status--${show.status === "Watched" ? "watched" : "watchlist"}`}>
+          {show.status === "Watched" ? "✓ Watched" : "⏳ Watchlist"}
+        </div>
+      </div>
+
+      <div className="mg-card__info">
+        <h4 className="mg-card__title" title={show.title}>{show.title}</h4>
+        <div className="mg-card__meta">
+          {show.year && <span className="mg-card__year">{show.year}</span>}
+          {show.genre && (
+            <span className="mg-card__genre">{show.genre.split(",")[0].trim()}</span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

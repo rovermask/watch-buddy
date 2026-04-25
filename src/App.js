@@ -15,6 +15,7 @@ import UsersTable from "./components/admin/tables/UsersTable";
 import MoviesTable from "./components/admin/tables/MoviesTable";
 import BooksTable from "./components/admin/tables/BooksTable";
 import SeriesTable from "./components/admin/tables/SeriesTable";
+import './wb-global.css';
 
 function App() {
   return (
