@@ -1,45 +1,51 @@
 // src/components/admin/tables/UsersTable.js
-import { Table, Button } from "react-bootstrap";
-import { useTheme } from "../../../ThemeContext"; // adjust path if needed
 import { useOutletContext } from "react-router-dom";
+import AdminTable from "./AdminTable";
 
 export default function UsersTable() {
-    const { darkMode } = useTheme();
-    const { users, onDelete } = useOutletContext();
-  
+  const { users = [], onDelete } = useOutletContext();
+
+  const columns = [
+    {
+      key: "name",
+      label: "Name",
+      className: "admin-table__title",
+      render: (u) => (
+        <span className="admin-table__owner">
+          <span className="admin-table__avatar" aria-hidden="true">
+            {(u.name || u.email || "?")[0].toUpperCase()}
+          </span>
+          {u.name || "—"}
+        </span>
+      ),
+    },
+    {
+      key: "email",
+      label: "Email",
+      render: (u) => u.email || "—",
+    },
+    {
+      key: "role",
+      label: "Role",
+      render: (u) => (
+        <span
+          className={`admin-table__role-badge admin-table__role-badge--${
+            u.role === "admin" ? "admin" : "user"
+          }`}
+        >
+          {u.role || "user"}
+        </span>
+      ),
+    },
+  ];
+
   return (
-    <div className="mt-4">
-      <h4>👤 Users</h4>
-      <Table striped bordered hover responsive className={darkMode ? "table-dark" : ""}>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u, i) => (
-            <tr key={u.uid}>
-              <td>{i + 1}</td>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>{u.role}</td>
-              <td>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => onDelete("users", u.uid)}
-                >
-                  Delete
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
+    <AdminTable
+      title="👤 Users"
+      columns={columns}
+      rows={users.map((u) => ({ ...u, id: u.uid }))} // normalize id field
+      onDelete={(row) => onDelete("users", row.uid)}
+      emptyMsg="No users found."
+    />
   );
 }

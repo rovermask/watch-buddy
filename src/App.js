@@ -4,6 +4,7 @@ import NavBar from "./components/NavBar";
 import AddMovie from "./components/movies/AddMovie";
 import AddSeries from "./components/series/AddSeries";
 import AddBook from "./components/books/AddBook";
+import CustomLists from "./components/customlists/CustomLists";
 import ProtectedRoute from "./ProtectedRoute";
 import Signup from "./Signup";
 import AdminPage from "./components/admin/AdminPage";
@@ -16,6 +17,7 @@ import MoviesTable from "./components/admin/tables/MoviesTable";
 import BooksTable from "./components/admin/tables/BooksTable";
 import SeriesTable from "./components/admin/tables/SeriesTable";
 import './wb-global.css';
+import './responsive.css';
 
 function App() {
   return (
@@ -78,6 +80,15 @@ function App() {
           <ProtectedRoute>
             <NavBar />
             <AddBook />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/custom-lists"
+        element={
+          <ProtectedRoute>
+            <NavBar />
+            <CustomLists />
           </ProtectedRoute>
         }
       />

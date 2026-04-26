@@ -1,55 +1,61 @@
-// src/admin/Navbar.js  
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import Button from "react-bootstrap/Button";
+// src/components/admin/AdminNavbar.js
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import "../../App.css";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
-import { Sun, Moon } from "lucide-react"; // optional icons (install lucide-react)
+import { Sun, Moon, LogOut, Menu, Tv } from "lucide-react";
 import { useTheme } from "../../ThemeContext";
+import "./Admin.css"; // ← single admin stylesheet
 
-export default function AdminNavbar() {
+export default function AdminNavbar({ onToggleSidebar }) {
   const { darkMode, setDarkMode } = useTheme();
+
   return (
-    <>
-      <Navbar expand="lg" bg={darkMode ? "dark" : "light"} variant={darkMode ? "dark" : "light"} style={{ position: "sticky", top: "0", zIndex: "1000", height: "60px" }}>
-        <Container>
-          <Navbar.Brand as={NavLink} to="/" className='fw-bold'>
-            📺 WatchBuddy
-          </Navbar.Brand>
+    <nav className="admin-navbar">
+      {/* Hamburger — visible on mobile */}
+      <button
+        className="admin-navbar__hamburger"
+        onClick={onToggleSidebar}
+        aria-label="Toggle sidebar"
+      >
+        <Menu size={20} />
+      </button>
 
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
-              <Nav.Link as={NavLink} to="/users">
-                🎬 Users
-              </Nav.Link>
-              <Nav.Link as={NavLink} to="/entries">
-                📺 Entries
-              </Nav.Link>
-            </Nav>
-            <Button
-              variant={darkMode ? "outline-light" : "outline-light"}
-              onClick={() => setDarkMode(!darkMode)}
-              className="ms-2 ml-3"
-            >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </Button>
+      {/* Brand */}
+      <NavLink to="/" className="admin-navbar__brand">
+        <span className="admin-navbar__brand-icon">
+          <Tv size={17} color="#fff" />
+        </span>
+        WatchBuddy
+      </NavLink>
 
-            {/* Logout button */}
-            <Button
-              variant={darkMode ? "outline-light" : "outline-light"}
-              className="ms-2 fw-bold"
-              onClick={() => signOut(auth)}
-            >
-              🚪 Logout
-            </Button>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-    </>
+      {/* Admin badge */}
+      <span className="admin-navbar__badge">Admin</span>
 
+      <div className="admin-navbar__spacer" />
+
+      {/* Actions */}
+      <div className="admin-navbar__actions">
+        {/* Theme toggle */}
+        <button
+          className="admin-navbar__icon-btn"
+          onClick={() => setDarkMode(!darkMode)}
+          aria-label="Toggle theme"
+          title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {darkMode ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+
+        {/* Logout */}
+        <button
+          className="admin-navbar__logout"
+          onClick={() => signOut(auth)}
+          aria-label="Logout"
+        >
+          <LogOut size={15} />
+          <span>Logout</span>
+        </button>
+      </div>
+    </nav>
   );
 }
