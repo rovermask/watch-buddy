@@ -1,7 +1,6 @@
 // src/components/admin/Sidebar.js
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Users, Film, BookOpen, Tv } from "lucide-react";
-import { useTheme } from "../../ThemeContext";
 import "./Admin.css";
 
 const NAV_ITEMS = [

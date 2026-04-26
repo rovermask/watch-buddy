@@ -8,7 +8,6 @@ import MovieTable from "./MovieTable";
 import MovieForm from "./MovieForm";
 import MovieGrid from "./MovieGrid";
 import { Plus, Search, Grid3x3, List, Filter, Film, Clock, CheckCircle } from "lucide-react";
-import { useTheme } from "../../ThemeContext";
 
 export default function AddMovie() {
   const [user] = useAuthState(auth);

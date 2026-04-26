@@ -8,7 +8,6 @@ import BookTable from "./BookTable";
 import BookForm from "./BookForm";
 import BookGrid from "./BookGrid";
 import { Plus, Search, Grid3x3, List, Filter, BookOpen, Clock, CheckCircle } from "lucide-react";
-import { useTheme } from "../../ThemeContext";
 
 export default function AddBook() {
   const [user] = useAuthState(auth);

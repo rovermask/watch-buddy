@@ -8,7 +8,6 @@ import SeriesTable from "./SeriesTable";
 import SeriesForm from "./SeriesForm";
 import SeriesGrid from "./SeriesGrid";
 import { Plus, Search, Grid3x3, List, Filter, Tv, Clock, CheckCircle } from "lucide-react";
-import { useTheme } from "../../ThemeContext";
 
 export default function AddSeries() {
   const [user] = useAuthState(auth);
