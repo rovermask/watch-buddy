@@ -11,7 +11,6 @@ import { Plus, Search, Grid3x3, List, Filter, Film, Clock, CheckCircle } from "l
 import { useTheme } from "../../ThemeContext";
 
 export default function AddMovie() {
-  const { darkMode } = useTheme();
   const [user] = useAuthState(auth);
   const [movies, setMovies] = useState([]);
   const [view, setView] = useState("Watchlist");

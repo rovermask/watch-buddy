@@ -11,7 +11,6 @@ import { Plus, Search, Grid3x3, List, Filter, Tv, Clock, CheckCircle } from "luc
 import { useTheme } from "../../ThemeContext";
 
 export default function AddSeries() {
-  const { darkMode } = useTheme();
   const [user] = useAuthState(auth);
   const [series, setSeries] = useState([]);
   const [view, setView] = useState("Watchlist");

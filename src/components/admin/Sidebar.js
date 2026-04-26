@@ -13,8 +13,6 @@ const NAV_ITEMS = [
 ];
 
 export default function Sidebar({ isOpen, counts = {} }) {
-  const { darkMode } = useTheme();
-
   return (
     <aside className={`admin-sidebar ${isOpen ? "is-open" : ""}`}>
       <div className="admin-sidebar__header">

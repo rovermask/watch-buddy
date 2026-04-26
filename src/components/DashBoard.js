@@ -4,7 +4,7 @@ import { auth, db } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import { Pie, Line } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import { useTheme } from "../ThemeContext";
 import { Film, Tv, BookOpen, TrendingUp, Clock, CheckCircle, ListChecks } from "lucide-react";
 import { useNavigate } from "react-router-dom";

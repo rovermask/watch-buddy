@@ -1,5 +1,4 @@
 // src/components/admin/AdminNavbar.js
-import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";

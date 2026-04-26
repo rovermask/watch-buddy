@@ -11,7 +11,6 @@ import { Plus, Search, Grid3x3, List, Filter, BookOpen, Clock, CheckCircle } fro
 import { useTheme } from "../../ThemeContext";
 
 export default function AddBook() {
-  const { darkMode } = useTheme();
   const [user] = useAuthState(auth);
   const [books, setBooks] = useState([]);
   const [view, setView] = useState("To Read");
