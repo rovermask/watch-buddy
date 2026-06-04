@@ -17,7 +17,7 @@ const GENRE_MAP = {
   10766: "Soap", 10767: "Talk", 10768: "War & Politics", 37: "Western"
 };
 
-export default function SeriesForm({ show, onHide, onSubmit }) {
+export default function SeriesForm({ show, onHide, onSubmit, initialData, isEditing }) {
   const [title, setTitle] = useState("");
   const [year, setYear] = useState("");
   const [genre, setGenre] = useState("");
@@ -29,6 +29,21 @@ export default function SeriesForm({ show, onHide, onSubmit }) {
   const [submitting, setSubmitting] = useState(false);
   const [showManualInput, setShowManualInput] = useState(false);
   const [error, setError] = useState("");
+
+  // Populate fields when opening in edit mode
+  useEffect(() => {
+    if (show && isEditing && initialData) {
+      setTitle(initialData.title || "");
+      setYear(initialData.year || "");
+      setGenre(initialData.genre || "");
+      setStatus(initialData.status || "Watchlist");
+      setCover(initialData.cover || initialData.poster || "");
+      setManualCover("");
+      setSuggestions([]);
+      setShowManualInput(false);
+      setError("");
+    }
+  }, [show, isEditing, initialData]);
 
   useEffect(() => {
     if (title.length > 2) {
@@ -97,7 +112,7 @@ export default function SeriesForm({ show, onHide, onSubmit }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate year if provided
     if (year && (isNaN(year) || year < 1920 || year > new Date().getFullYear() + 5)) {
       setError("Please enter a valid year");
@@ -109,14 +124,14 @@ export default function SeriesForm({ show, onHide, onSubmit }) {
 
     try {
       const finalCover = manualCover.trim() || cover;
-      await onSubmit({ 
-        title: title.trim(), 
-        year, 
-        genre: genre.trim(), 
-        status, 
-        cover: finalCover 
+      await onSubmit({
+        title: title.trim(),
+        year,
+        genre: genre.trim(),
+        status,
+        cover: finalCover
       });
-      
+
       // Reset form
       setTitle("");
       setYear("");
@@ -129,7 +144,7 @@ export default function SeriesForm({ show, onHide, onSubmit }) {
       onHide();
     } catch (err) {
       console.error("Error adding series:", err);
-      setError("Failed to add series. Please try again.");
+      setError("Failed to save series. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -151,12 +166,12 @@ export default function SeriesForm({ show, onHide, onSubmit }) {
   return (
     <Modal show={show} onHide={handleClose} centered size="lg">
       <Modal.Header closeButton className="custom-close">
-        <Modal.Title>📺 Add New Series</Modal.Title>
+        <Modal.Title>{isEditing ? "✏️ Edit Series" : "📺 Add New Series"}</Modal.Title>
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
           {error && <Alert variant="danger" dismissible onClose={() => setError("")}>{error}</Alert>}
-          
+
           {/* Search */}
           <Form.Group className="mb-3">
             <Form.Label>Title <span className="text-danger">*</span></Form.Label>
@@ -270,9 +285,9 @@ export default function SeriesForm({ show, onHide, onSubmit }) {
           <Form.Group className="mb-3">
             <div className="d-flex justify-content-between align-items-center mb-2">
               <Form.Label className="mb-0">Poster Image</Form.Label>
-              <Button 
-                variant="link" 
-                size="sm" 
+              <Button
+                variant="link"
+                size="sm"
                 onClick={() => setShowManualInput(!showManualInput)}
                 disabled={submitting}
               >
@@ -316,8 +331,10 @@ export default function SeriesForm({ show, onHide, onSubmit }) {
                 <Spinner animation="border" size="sm" className="me-2" />
                 Adding...
               </>
+            ) : isEditing ? (
+              "Save Changes" 
             ) : (
-              <>Add Series</>
+              "Add Series"
             )}
           </Button>
         </Modal.Footer>

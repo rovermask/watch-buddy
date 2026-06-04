@@ -17,7 +17,7 @@ const GENRE_MAP = {
   878: "Science Fiction", 10770: "TV Movie", 53: "Thriller", 10752: "War", 37: "Western"
 };
 
-export default function MovieForm({ show, onHide, onSubmit }) {
+export default function MovieForm({ show, onHide, onSubmit, initialData, isEditing }) {
   const [title, setTitle] = useState("");
   const [year, setYear] = useState("");
   const [genre, setGenre] = useState("");
@@ -29,6 +29,21 @@ export default function MovieForm({ show, onHide, onSubmit }) {
   const [submitting, setSubmitting] = useState(false);
   const [showManualInput, setShowManualInput] = useState(false);
   const [error, setError] = useState("");
+
+  // Populate fields when opening in edit mode
+  useEffect(() => {
+    if (show && isEditing && initialData) {
+      setTitle(initialData.title || "");
+      setYear(initialData.year || "");
+      setGenre(initialData.genre || "");
+      setStatus(initialData.status || "Watchlist");
+      setPoster(initialData.poster || "");
+      setManualPoster("");
+      setSuggestions([]);
+      setShowManualInput(false);
+      setError("");
+    }
+  }, [show, isEditing, initialData]);
 
   // 🔍 Fetch movie suggestions  
   useEffect(() => {
@@ -131,7 +146,7 @@ export default function MovieForm({ show, onHide, onSubmit }) {
       onHide();
     } catch (err) {
       console.error("Error adding movie:", err);
-      setError("Failed to add movie. Please try again.");
+      setError("Failed to save movie. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -153,7 +168,7 @@ export default function MovieForm({ show, onHide, onSubmit }) {
   return (
     <Modal show={show} onHide={handleClose} centered size="lg">
       <Modal.Header closeButton className="custom-close">
-        <Modal.Title>🎬 Add New Movie</Modal.Title>
+        <Modal.Title>{isEditing ? "✏️ Edit Movie" : "🎬 Add New Movie"}</Modal.Title>
       </Modal.Header>
       <Form onSubmit={handleSubmit}>
         <Modal.Body>
@@ -312,14 +327,20 @@ export default function MovieForm({ show, onHide, onSubmit }) {
           <Button variant="secondary" onClick={handleClose} disabled={submitting}>
             Cancel
           </Button>
-          <Button variant="success" type="submit" disabled={submitting}>
+          <Button 
+            variant="success" 
+            type="submit" 
+            disabled={submitting}
+          >
             {submitting ? (
               <>
                 <Spinner animation="border" size="sm" className="me-2" />
                 Adding...
               </>
+            ) : isEditing ? (
+              "Save Changes" 
             ) : (
-              <>Add Movie</>
+              "Add Movie"
             )}
           </Button>
         </Modal.Footer>

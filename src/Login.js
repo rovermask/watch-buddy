@@ -21,11 +21,9 @@ function Login() {
       // 2. Fetch Firestore user document
       const userDocRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userDocRef);
-      console.log(userDoc.data()) 
       
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        console.log(userData)
         // 3. Redirect based on role
         if (userData.role === "admin") {
           navigate("/admin");
